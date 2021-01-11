@@ -1,0 +1,9 @@
+[
+  {"name" : "Dune" ,                    "loc" : "/dune"},
+  {"name" : "Lord of the Flies" ,       "loc" : "/flies"} ,
+  {"name" : "The Grapes of Wrath" ,     "loc" : "/grapes"} ,
+  {"name" : "To Kill a Mockingbird" ,   "loc" : "/mockingbird"} ,
+  {"name" : "The Sun and Her Flowers" , "loc" : "/sun"} ,
+  {"name" : "Leaves of Grass" ,         "loc" : "/leaves"}
+   
+]
