@@ -61,7 +61,13 @@ function checkDatabaseForUsernameAndPass(inputUsername, inputPass){
 //kewicool#2134
 //login page
 app.get('/',function(req,res){
+
+  if(!req.session.username)
   res.render("login",{message:""});
+  else
+  res.redirect("home");
+
+
 });
 
 app.post('/',function(req,res){
@@ -74,38 +80,40 @@ app.post('/',function(req,res){
     req.session.username = req.body.username;
     currentUser = req.body.username ;
     res.redirect("/home");
-    /*
-    var sessionUser= {table: [{username:req.body.username,ID:req.sessionID}]};
-    try {
-      if (fs.existsSync('./sessionUser.json')) {
-        sessionUser = JSON.parse(fs.readFileSync("sessionUser.json"));
-        console.log(sessionUser);
-        var userHasSession = false;
-        for(let i=0;i<sessionUser.table.length;i++){
-          if(sessionUser.table[i].username.localeCompare(req.body.username)==0){
-          userHasSession = true;
-          sessionUser.table[i].ID = req.sessionID;
-          console.log(userHasSession);
-          break;
-          }
-        }
-        if(!userHasSession){
-        sessionUser.table.push({username:req.body.username,ID:req.sessionID});
-        }
-        fs.writeFileSync("sessionUser.json",JSON.stringify(sessionUser));
-      }
-      else{
-        fs.writeFileSync("sessionUser.json",JSON.stringify(sessionUser));
-        console.log("dfgfd");
+ 
+    
+    // var sessionUser= {table: [{username:req.body.username,ID:req.sessionID}]};
+    // try {
+    //   if (fs.existsSync('./sessionUser.json')) {
+    //     //if the file exists check if user already has session
+    //     sessionUser = JSON.parse(fs.readFileSync("sessionUser.json"));
+    //     console.log(sessionUser);
+    //     var userHasSession = false;
+    //     for(let i=0;i<sessionUser.table.length;i++){
+    //       if(sessionUser.table[i].username.localeCompare(req.body.username)==0){
+    //       userHasSession = true;
+    //       sessionUser.table[i].ID = req.sessionID;
+    //       console.log(userHasSession);
+    //       break;
+    //       }
+    //     }
+    //     if(!userHasSession){
+    //     sessionUser.table.push({username:req.body.username,ID:req.sessionID});
+    //     }
+    //     fs.writeFileSync("sessionUser.json",JSON.stringify(sessionUser));
+    //   }
+    //   else{
+    //     fs.writeFileSync("sessionUser.json",JSON.stringify(sessionUser));
+    //     console.log("dfgfd");
 
-      }
+    //   }
 
     
-    } catch(err) {
-      console.error(err)
-    }
-    console.log(sessionUser);
-    */
+    // } catch(err) {
+    //   console.error(err)
+    // }
+    // console.log(sessionUser);
+    
   }
   else{
     //if username exists but password is wrong
@@ -121,8 +129,11 @@ app.get('/home',function(req,res){
   // if not logged in then he can't view the pages
   if (!req.session.username)
    res.redirect("/");
-  else
-   res.render("home");
+  else{
+    res.render("home");
+    console.log(req.session.username);
+    console.log(req.sessionID);
+  }
 })
 // registeration
 app.get('/registration',function(req,res){
@@ -149,17 +160,24 @@ app.post('/register',function(req,res){
   
 });
 
+//sign out page
+app.post('/signOut',function(req,res){
+  req.session.destroy();
+  
+  res.redirect("/");
+});
+
+function deleteCookie(c_name) {
+  document.cookie = encodeURIComponent(c_name) + "=deleted; expires=" + new Date(0).toUTCString();
+}
 
 
-
-//home page
 
 app.get('/novel',function(req,res){
   if (!req.session.username)
    res.redirect("/");
   else{
-    console.log(req.session.username);
-    console.log(req.sessionID);
+   
 
     res.render("novel");
   }
@@ -169,16 +187,14 @@ app.get('/poetry',function(req,res){
   if (!req.session.username)
    res.redirect("/");
    else{
-    console.log(req.session.username);
-    console.log(req.sessionID);
+    
   res.render("poetry");}
 });
 app.get('/fiction',function(req,res){
   if (!req.session.username)
    res.redirect("/");
    else{
-    console.log(req.session.username);
-    console.log(req.sessionID);
+    
   res.render("fiction");}
 });
 
@@ -193,9 +209,8 @@ app.get('/readlist',function(req,res){
   var result = [];
 
   for(let i=0;i<UsersArray.table.length;i++){
-    if((UsersArray.table[i].username.localeCompare(currentUser))==0){
+    if((UsersArray.table[i].username.localeCompare(req.session.username))==0){
     result = result.concat( UsersArray.table[i].wantRead );
-    console.log(result);
     }
     }  
 res.render("readlist" , {result} ) 
@@ -231,7 +246,7 @@ app.get('/flies',function(req,res){
   res.render("flies");
 });
 app.post('/flies' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 
@@ -243,7 +258,7 @@ app.get('/grapes',function(req,res){
   res.render("grapes");
 });
 app.post('/grapes' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 
@@ -256,19 +271,20 @@ app.get('/leaves',function(req,res){
   res.render("leaves");
 });
 app.post('/leaves' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 
 // Sun
 app.get('/sun',function(req,res){
+
   if (!req.session.username)
    res.redirect("/");
   else
   res.render("sun");
 });
 app.post('/sun' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 
@@ -281,7 +297,7 @@ app.get('/dune',function(req,res){
   res.render("dune");
 });
 app.post('/dune' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 // MockingBird
@@ -292,7 +308,7 @@ app.get('/mockingbird',function(req,res){
   res.render("mockingbird");
 });
 app.post('/mockingbird' , (req ,res )=> {
-  addBook(req.originalUrl , req.session.username);
+  addBook(req.originalUrl,req.session.username);
   res.redirect( req.originalUrl ) ;           
 });
 
@@ -313,12 +329,12 @@ function currentBook (url){
 }
 
 
-function addBook ( s , user){
+function addBook ( s,currentUs ){
 var addable = true;
 UsersArray = JSON.parse(fs.readFileSync("users.json"));
   var bookurl = s ;
   for(let i=0;i<UsersArray.table.length;i++){
-    if((UsersArray.table[i].username.localeCompare(user))==0)
+    if((UsersArray.table[i].username.localeCompare(currentUs))==0)
          {
             for(let j=0;j<UsersArray.table[i].wantRead.length;j++)
               if(UsersArray.table[i].wantRead[j].name.localeCompare(currentBook(s).name)==0)
@@ -329,20 +345,18 @@ UsersArray = JSON.parse(fs.readFileSync("users.json"));
          }
   }
   console.log("Book Added");
+ 
   fs.writeFileSync("users.json",JSON.stringify(UsersArray));   
 }
 
 
 //app port number
-// app.listen(30001 , () => {
-//   console.log('connection');
-// });
-
-if (process.env.PORT){
-  app.listen(process.env.PORT,function(){console.log("Server started")})
+if(process.env.PORT){
+  app.listen(process.env.PORT,function(){console.log("online")})
 }
 else{
-  app.listen(30001,function(){console.log("Host serves")})
-}
-
+app.listen(30001 , () => {
+  console.log('local');
+});
+};
 
