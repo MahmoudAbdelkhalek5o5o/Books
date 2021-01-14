@@ -246,8 +246,13 @@ app.get('/flies',function(req,res){
   res.render("flies");
 });
 app.post('/flies' , (req ,res )=> {
-  addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;           
 });
 
 // Grapes
@@ -258,8 +263,13 @@ app.get('/grapes',function(req,res){
   res.render("grapes");
 });
 app.post('/grapes' , (req ,res )=> {
-  addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;                 
 });
 
 //poetry section
@@ -271,8 +281,13 @@ app.get('/leaves',function(req,res){
   res.render("leaves");
 });
 app.post('/leaves' , (req ,res )=> {
-  addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;            
 });
 
 // Sun
@@ -284,8 +299,13 @@ app.get('/sun',function(req,res){
   res.render("sun");
 });
 app.post('/sun' , (req ,res )=> {
-  addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;                  
 });
 
 //fiction section
@@ -297,8 +317,13 @@ app.get('/dune',function(req,res){
   res.render("dune");
 });
 app.post('/dune' , (req ,res )=> {
-  addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;                
 });
 // MockingBird
 app.get('/mockingbird',function(req,res){
@@ -309,7 +334,13 @@ app.get('/mockingbird',function(req,res){
 });
 app.post('/mockingbird' , (req ,res )=> {
   addBook(req.originalUrl,req.session.username);
-  res.redirect( req.originalUrl ) ;           
+  var addable = addBook(req.originalUrl,req.session.username);
+  var message ; 
+  if (addable)
+  message = "Book Has Been Added";
+  else 
+  message = "Book does exist in readlist";
+  res.render( "message" , {message} ) ;                  
 });
 
 
@@ -344,9 +375,8 @@ UsersArray = JSON.parse(fs.readFileSync("users.json"));
               break;
          }
   }
-  console.log("Book Added");
- 
-  fs.writeFileSync("users.json",JSON.stringify(UsersArray));   
+  fs.writeFileSync("users.json",JSON.stringify(UsersArray)); 
+  return addable ;  
 }
 
 
